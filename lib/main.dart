@@ -20,10 +20,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ErrorListener(
-        child: MyHomePage(),
-      ),
+    return MaterialApp(
+      builder: (context, child) {
+        return ErrorListener(child: child ?? const SizedBox());
+      },
+      home: const MyHomePage(),
     );
   }
 }
@@ -37,7 +38,6 @@ class MyHomePage extends StatelessWidget {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            // Локальная ошибка
             Future.delayed(Duration.zero, () {
               throw const SocketException("Ошибка сети");
             });
@@ -88,13 +88,13 @@ class _ErrorListenerState extends State<ErrorListener> {
 }
 
 class ErrorManager {
-  static final ErrorManager _instance = ErrorManager._internal();
+  static final ErrorManager _instance = ErrorManager._();
 
-  final _errorStreamController = StreamController<Object>.broadcast();
+  final _errorStreamController = StreamController<Object>();
 
   factory ErrorManager() => _instance;
 
-  ErrorManager._internal();
+  ErrorManager._();
 
   Stream<Object> get errorStream => _errorStreamController.stream;
 
